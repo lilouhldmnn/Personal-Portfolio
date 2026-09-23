@@ -1,3 +1,4 @@
+/* RESET : Réinitialise les marges par défaut pour éviter les décalages */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -7,61 +8,86 @@
 body {
   background-color: #0a0b10;
   min-height: 100vh;
-  overflow-x: hidden;
+  /* Empêche la barre de défilement horizontale si un élément dépasse */
+  overflow-x: hidden; 
 }
 
-/* Positionnement sur le bord gauche (coupé de moitié) */
+/* CONTENEUR DU VINYLE (Taille libre sans plafond) */
 .vinyl-container {
-  position: fixed;
+  position: fixed; 
   top: 50%;
-  left: 0;
+  left: 0;  
   transform: translate(-50%, -50%);
-  width: 450px;
-  height: 450px;
+  
+  /* 
+     On utilise vh (hauteur de l'écran).
+     - 80vh  = occupe 80% de la hauteur de ton écran.
+     - 100vh = fait EXACTEMENT la hauteur de ton écran.
+     - 120vh = déborde légèrement en haut et en bas (effet XL géant !).
+  */
+  width: 125vh;
+  height: 125vh;
+  
   z-index: 100;
 }
 
-/* Groupe image + centre de couleur */
+/* WRAPPER (Zone cliquable et animation) */
 .vinyl-wrapper {
-  position: relative;
+  position: relative; /* Sert de repère pour placer la pastille .vinyl-label */
   width: 100%;
   height: 100%;
-  cursor: pointer;
+  cursor: pointer;   /* Affiche le curseur en forme de main */
 }
 
+/* L'IMAGE DU VINYLE */
 .vinyl-wrapper img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: contain; /* Conserve les proportions sans déformer */
   border-radius: 50%;
 }
 
-/* Pastille du milieu (change #ff0055 pour modifier la couleur) */
+/* MACARON CENTRAL (Pastille de couleur) */
 .vinyl-label {
+  /* --------------------------------------------------
+     TES RÉGLAGES PERSONNELS (Modifie les valeurs ici !)
+     -------------------------------------------------- */
+  --taille-pastille: 20%;   /* Taille globale du macaron (ex: 25%, 35%, 40%) */
+  --taille-trou: 16%;        /* Taille du trou noir au centre (ex: 10%, 20%) */
+  --couleur-macaron: #00279c; /* Couleur du macaron (ex: #ffe600, #00f3ff...) */
+
+  /* --------------------------------------------------
+     CODE TECHNIQUE (Pas besoin d'y toucher)
+     -------------------------------------------------- */
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 29.5%;
-  height: 29.5%;
+  width: var(--taille-pastille);
+  height: var(--taille-pastille);
   border-radius: 50%;
-  background: radial-gradient(circle, #0a0b10 16%, #ff0055 17%);
+  
+  /* Utilise les variables définies au-dessus pour créer le cercle */
+  background: radial-gradient(
+    circle, 
+    #0a0b10 var(--taille-trou), 
+    var(--couleur-macaron) calc(var(--taille-trou) + 1%)
+  );
 }
 
-/* Animation de rotation */
+/* ANIMATION DE ROTATION */
 .spinning {
+  /* nom_animation | durée | vitesse_constante | infinie */
   animation: spin 8s linear infinite;
 }
 
+/* CLASSE AJOUTÉE EN JS : Met l'animation en pause */
 .paused {
   animation-play-state: paused;
 }
 
+/* Définition des étapes de la rotation (de 0 à 360 degrés) */
 @keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
